@@ -1,0 +1,58 @@
+# Application configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /livemigrate
+
+spring:
+  application:
+    name: live-migrate
+
+  # Updated Redis configuration using the current property structure
+  data:
+    redis:
+      # Connection settings
+      connect-timeout: 2000  # Connection timeout in milliseconds
+      client-type: lettuce   # Specify the Redis client implementation
+
+      # Main connection parameters
+      connection-details:
+        host: localhost      # Redis server host
+        port: 6379          # Redis server port
+        database: 0         # Redis database index
+        # username: your-username  # Uncomment if using Redis with authentication
+        # password: your-password  # Uncomment if using Redis with authentication
+
+      # Connection pooling configuration
+      pool:
+        enabled: true           # Enable connection pooling
+        max-active: 8          # Maximum number of active connections
+        max-idle: 8            # Maximum number of idle connections
+        min-idle: 2            # Minimum number of idle connections
+        max-wait: 1000ms       # Maximum time to wait for a connection
+        time-between-eviction-runs: 9000ms  # Time between pool maintenance runs
+
+# Actuator endpoints for monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true    # Enable Kubernetes liveness/readiness probes
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+
+# Logging configuration
+logging:
+  level:
+    root: INFO
+    com.livemigrate: DEBUG
+    org.springframework.data.redis: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
